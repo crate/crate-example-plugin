@@ -1,12 +1,17 @@
 apply plugin: 'java'
 apply plugin: 'idea'
 
+version = "0.0.1"
+
 repositories {
     jcenter()
+    maven {
+        url  "http://dl.bintray.com/crate/crate"
+    }
 }
 
 ext {
-    crate_version = '0.48.1'
+    crate_version = '0.49.0'
     downloadDir = new File(rootDir, 'downloads')
 }
 
@@ -16,7 +21,7 @@ configurations {
 }
 
 dependencies {
-    compile files('../crate/app/build/libs/crate-app.jar')
+    compile "io.crate:crate:$crate_version"
     dependency 'net.rtme:classnamerj:0.0.1'
 
     testCompile 'org.hamcrest:hamcrest-all:1.3'
@@ -71,26 +76,33 @@ def extractTopFolder(File src, String trg){
 }
 
 task downloadCrateRelease << {
-    //def dest = download(
-    //        "https://cdn.crate.io/downloads/releases/crate-${crate_version}.tar.gz",
-    //        "crate-${crate_version}.tar.gz")
-    //extractTopFolder(dest, 'parts/crate')
+    def dest = download(
+            "https://cdn.crate.io/downloads/releases/crate-${crate_version}.tar.gz",
+            "crate-${crate_version}.tar.gz")
+    extractTopFolder(dest, 'parts/crate')
 }
 
 task deleteCrateDownloadFolder(type: Delete) {
     delete "${project.rootDir}/parts/crate"
 }
 
-task copyJarsToCrateClasspath(dependsOn: [jar, downloadCrateRelease]) {
-    copy {
-        from(jar)
-        into "${project.rootDir}/parts/crate/lib"
+task jarIncludingDependencies(type: Jar) {
+    from configurations.dependency.collect {
+        it.isDirectory() ? it : zipTree(it).matching{
+            exclude 'META-INF/**'
+        }
     }
+    from sourceSets.main.output
+    doLast {
+        manifest {
+            attributes("Implementation-Title": "Example Crate.io plugin", "Implementation-Version": project.version)
+        }
+    }
+}
 
-    copy {
-        from(configurations.dependency)
-        into "${project.rootDir}/parts/crate/lib"
-    }
+task copyJarToCrateClasspath(type: Copy, dependsOn: [jarIncludingDependencies, downloadCrateRelease]) {
+    from(jar)
+    into "${project.rootDir}/parts/crate/lib"
 }
 
 test {
@@ -99,11 +111,11 @@ test {
     outputs.upToDateWhen { false }
 
     dependsOn downloadCrateRelease
-    dependsOn copyJarsToCrateClasspath
+    dependsOn copyJarToCrateClasspath
 }
 
 clean {
-    //dependsOn deleteCrateDownloadFolder
+    dependsOn deleteCrateDownloadFolder
 }
 
 
