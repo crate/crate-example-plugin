@@ -34,6 +34,20 @@ Example:
    +------------------------------+
    SELECT 2 rows in set (0.003 sec)
 
+Or with ``plugin.example.executeScalarPerRow`` setting set to
+``false``:
+
+::
+
+   cr> select classnamer() from sys.nodes;
+   +------------------------------+
+   | classnamer()                 |
+   +------------------------------+
+   | ThreadedResultReader         |
+   | ThreadedResultReader         |
+   +------------------------------+
+   SELECT 2 rows in set (0.003 sec)
+
 Beside of tests & gradle stuff, this package contains just 3 files:
 
 :META-INF/services/io.crate.Plugin:
@@ -62,20 +76,20 @@ Build JAR
 
    ./gradlew jar
 
+Build a single JAR including all dependencies
+---------------------------------------------
 
-Install JAR's
--------------
+::
 
-Copy plugin JAR to crate's class path::
+   ./gradlew jarIncludingDependencies
+
+
+Install JAR
+-----------
+
+Copy plugin's single JAR to crate's class path::
 
   cp build/libs/crate-example-plugin.jar <CRATE_HOME>/lib/
-
-Copy ``classnamerj-0.0.1.jar`` (the only dependency this plugin need)
-to crate's class path::
-
-  curl -o classnamerj-0.0.1.jar "https://jcenter.bintray.com/net/rtme/classnamerj/0.0.1/#classnamerj-0.0.1.jar"
-  cp classnamerj-0.0.1.jar <CRATE_HOME>/lib/
-
 
 Run tests
 =========
