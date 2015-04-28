@@ -26,6 +26,7 @@ import io.crate.metadata.FunctionInfo;
 import io.crate.metadata.Scalar;
 import io.crate.operation.Input;
 import io.crate.planner.symbol.Function;
+import io.crate.planner.symbol.Literal;
 import io.crate.planner.symbol.Symbol;
 import io.crate.types.DataType;
 import io.crate.types.DataTypes;
@@ -42,8 +43,14 @@ public class ClassnamerFunction extends Scalar<BytesRef, Void> {
             new FunctionIdent(NAME, Collections.<DataType>emptyList()), DataTypes.STRING,
             FunctionInfo.Type.SCALAR, false);
 
-    public static void register(ScalarFunctionModule module){
-        module.register(new ClassnamerFunction());
+    public static void register(ScalarFunctionModule module, boolean executePerRow){
+        module.register(new ClassnamerFunction(executePerRow));
+    }
+
+    private final boolean executePerRow;
+
+    public ClassnamerFunction(boolean executePerRow) {
+        this.executePerRow = executePerRow;
     }
 
     @Override
@@ -58,6 +65,9 @@ public class ClassnamerFunction extends Scalar<BytesRef, Void> {
 
     @Override
     public Symbol normalizeSymbol(Function symbol) {
+        if (!executePerRow) {
+            return Literal.newLiteral(evaluate(new Input[0]));
+        }
         /* There is no evaluation here, so the function is executed
            per row. Else every row would contain the same random value*/
         return symbol;

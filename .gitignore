@@ -10,3 +10,5 @@
 .gradle
 /build
 /out
+/downloads
+/parts

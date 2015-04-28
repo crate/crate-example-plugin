@@ -29,10 +29,14 @@ import org.elasticsearch.common.settings.Settings;
 
 public class ExamplePlugin extends AbstractPlugin {
 
+    public static final String EXECUTE_PER_ROW_SETTING = "plugin.example.executeScalarPerRow";
     private static final ESLogger LOGGER = Loggers.getLogger(ExamplePlugin.class);
 
+    private final boolean executePerRow;
+
     public ExamplePlugin(Settings settings) {
-        LOGGER.info("ExamplePlugin loaded");
+        executePerRow = settings.getAsBoolean(EXECUTE_PER_ROW_SETTING, true);
+        LOGGER.info("ExamplePlugin loaded, execute scalar function per row: {}", executePerRow);
     }
 
     @Override
@@ -53,6 +57,6 @@ public class ExamplePlugin extends AbstractPlugin {
      * the relevant <tt>onModule(AnyModule module)</tt> method.
      */
     public void onModule(ScalarFunctionModule module) {
-        ClassnamerFunction.register(module);
+        ClassnamerFunction.register(module, executePerRow);
     }
 }
