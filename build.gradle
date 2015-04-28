@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+archivesBaseName = 'crate-example-plugin'
+
+dependencies {
+    compile files('../crate/app/build/libs/crate-app.jar')
+    compile 'net.rtme:classnamerj:0.0.1'
+}
+
+repositories {
+   jcenter()
+}
