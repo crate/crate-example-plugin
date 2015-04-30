@@ -12,7 +12,7 @@
  Crate Example Plugin
 ======================
 
-.. highlight:: java
+.. highlight:: sql
 
 This is an example plugin for Crate_ demontrating its plugin
 infrastructure. It is implementing a simple ``classnamer()`` scalar function.
@@ -87,9 +87,9 @@ Build a single JAR including all dependencies
 Install JAR
 -----------
 
-Copy plugin's single JAR to crate's class path::
+Copy plugin's single JAR to crate's plugins directory::
 
-  cp build/libs/crate-example-plugin.jar <CRATE_HOME>/lib/
+  cp build/libs/crate-example-plugin.jar <CRATE_HOME>/plugins/
 
 Run tests
 =========
