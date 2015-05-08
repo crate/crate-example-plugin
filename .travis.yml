@@ -18,3 +18,4 @@ script: ./gradlew test -s
 
 notifications:
   email: false
+
