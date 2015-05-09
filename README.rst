@@ -16,7 +16,7 @@
 
 This is an example plugin for Crate_ demontrating its plugin
 infrastructure. It is implementing a simple ``classnamer()`` scalar function.
-Once build, it's JAR file can just be dropped into crate's class path
+Once build, it's JAR file can just be dropped into crate's plugin path
 and after restarting the node/cluster, a shiny new awesome
 ``classnamer()`` scalar function will be available on all SQL
 statements.
