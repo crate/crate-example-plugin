@@ -76,18 +76,10 @@ Build JAR
 
    ./gradlew jar
 
-Build a single JAR including all dependencies
----------------------------------------------
-
-::
-
-   ./gradlew jarIncludingDependencies
-
-
 Install JAR
 -----------
 
-Copy plugin's single JAR to crate's plugins directory::
+Copy plugin's JAR to crate's plugins directory::
 
   cp build/libs/crate-example-plugin.jar <CRATE_HOME>/plugins/
 

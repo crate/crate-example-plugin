@@ -83,7 +83,7 @@ task deleteCrateDownloadFolder(type: Delete) {
     delete "${project.rootDir}/parts/crate"
 }
 
-task jarIncludingDependencies(type: Jar) {
+jar {
     from configurations.dependency.collect {
         it.isDirectory() ? it : zipTree(it).matching{
             exclude 'META-INF/**'
@@ -97,7 +97,7 @@ task jarIncludingDependencies(type: Jar) {
     }
 }
 
-task copyJarToCrateClasspath(type: Copy, dependsOn: [jarIncludingDependencies, downloadCrateRelease]) {
+task copyJarToCrateClasspath(type: Copy, dependsOn: [jar, downloadCrateRelease]) {
     from(jar)
     into "${project.rootDir}/parts/crate/lib"
 }
