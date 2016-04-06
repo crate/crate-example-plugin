@@ -35,6 +35,11 @@ sourceSets {
     }
 }
 
+tasks.withType(JavaCompile) {
+    sourceCompatibility = "1.7"
+    targetCompatibility = "1.7"
+}
+
 // crate local installation tasks required by integration tests
 def download (String url, String name){
     downloadDir.mkdirs()
