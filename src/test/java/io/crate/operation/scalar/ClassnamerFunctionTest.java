@@ -21,12 +21,13 @@
 
 package io.crate.operation.scalar;
 
+import io.crate.analyze.symbol.Function;
+import io.crate.analyze.symbol.Literal;
+import io.crate.analyze.symbol.Symbol;
 import io.crate.metadata.FunctionIdent;
 import io.crate.metadata.Functions;
 import io.crate.operation.Input;
-import io.crate.planner.symbol.Function;
-import io.crate.planner.symbol.Literal;
-import io.crate.planner.symbol.Symbol;
+import io.crate.operation.tablefunctions.TableFunctionModule;
 import io.crate.plugin.ExamplePlugin;
 import io.crate.types.DataType;
 import io.crate.types.StringType;
@@ -37,7 +38,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.lucene.util.BytesRef;
 import org.elasticsearch.common.inject.ModulesBuilder;
-import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.common.settings.Settings;
 import org.junit.Test;
 
@@ -59,17 +59,24 @@ public class ClassnamerFunctionTest {
 
     private void registerPlugin(Settings settings) throws Exception {
         ScalarFunctionModule scalarFunctionModule = new ScalarFunctionModule();
+        TableFunctionModule tableFunctionModule = new TableFunctionModule();
+
         ExamplePlugin examplePlugin = new ExamplePlugin(settings);
         examplePlugin.onModule(scalarFunctionModule);
 
-        Functions functions = new ModulesBuilder().add(scalarFunctionModule)
-                .createInjector().getInstance(Functions.class);
-        classnamerFunction = (ClassnamerFunction)functions.get(new FunctionIdent(ClassnamerFunction.NAME, Collections.<DataType>emptyList()));
+        Functions functions = new ModulesBuilder()
+                .add(scalarFunctionModule)
+                .add(tableFunctionModule)
+                .createInjector()
+                .getInstance(Functions.class);
+        classnamerFunction = (ClassnamerFunction) functions.get(
+                new FunctionIdent(ClassnamerFunction.NAME, Collections.<DataType>emptyList())
+        );
     }
 
     @Test
     public void testEvaluate() throws Exception {
-        registerPlugin(ImmutableSettings.EMPTY);
+        registerPlugin(Settings.EMPTY);
 
         BytesRef value = classnamerFunction.evaluate(new Input[0]);
         validateClassnamer(value.utf8ToString());
@@ -78,7 +85,7 @@ public class ClassnamerFunctionTest {
     @Test
     public void testNormalizeDoNothingByDefault() throws Exception {
         // by default, normalize will do nothing in order to force evaluation on every row
-        registerPlugin(ImmutableSettings.EMPTY);
+        registerPlugin(Settings.EMPTY);
 
         Function function = new Function(classnamerFunction.info(), Collections.<Symbol>emptyList());
 
@@ -91,7 +98,7 @@ public class ClassnamerFunctionTest {
     public void testNormalizeWithCustomSetting() throws Exception {
         // lets change the setting to force normalization, function will be executed only once
         // per SQL statement (same value for all rows)
-        ImmutableSettings.Builder builder = ImmutableSettings.builder()
+        Settings.Builder builder = Settings.builder()
                 .put(ExamplePlugin.EXECUTE_PER_ROW_SETTING, false);
         registerPlugin(builder.build());
 
@@ -100,9 +107,9 @@ public class ClassnamerFunctionTest {
         Symbol symbol = classnamerFunction.normalizeSymbol(function);
         assertThat(symbol, instanceOf(Literal.class));
 
-        Literal literal = (Literal)symbol;
+        Literal literal = (Literal) symbol;
         assertThat(literal.valueType(), instanceOf(StringType.class));
-        BytesRef value = (BytesRef)literal.value();
+        BytesRef value = (BytesRef) literal.value();
 
         validateClassnamer(value.utf8ToString());
     }
