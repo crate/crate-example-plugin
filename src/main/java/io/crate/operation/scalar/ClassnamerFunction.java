@@ -27,6 +27,7 @@ import io.crate.analyze.symbol.Symbol;
 import io.crate.metadata.FunctionIdent;
 import io.crate.metadata.FunctionInfo;
 import io.crate.metadata.Scalar;
+import io.crate.metadata.TransactionContext;
 import io.crate.operation.Input;
 import io.crate.types.DataType;
 import io.crate.types.DataTypes;
@@ -37,7 +38,7 @@ import java.util.Collections;
 
 public class ClassnamerFunction extends Scalar<BytesRef, Void> {
 
-    protected static final String NAME = "classnamer";
+    static final String NAME = "classnamer";
 
     private final static FunctionInfo INFO = new FunctionInfo(
             new FunctionIdent(NAME, Collections.<DataType>emptyList()), DataTypes.STRING, FunctionInfo.Type.SCALAR, false, true
@@ -49,7 +50,7 @@ public class ClassnamerFunction extends Scalar<BytesRef, Void> {
 
     private final boolean executePerRow;
 
-    public ClassnamerFunction(boolean executePerRow) {
+    private ClassnamerFunction(boolean executePerRow) {
         this.executePerRow = executePerRow;
     }
 
@@ -64,9 +65,9 @@ public class ClassnamerFunction extends Scalar<BytesRef, Void> {
     }
 
     @Override
-    public Symbol normalizeSymbol(Function symbol) {
+    public Symbol normalizeSymbol(Function symbol, TransactionContext context) {
         if (!executePerRow) {
-            return Literal.newLiteral(evaluate(new Input[0]));
+            return Literal.of(evaluate(new Input[0]));
         }
         /* There is no evaluation here, so the function is executed
            per row. Else every row would contain the same random value*/

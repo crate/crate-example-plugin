@@ -21,11 +21,13 @@
 
 package io.crate.operation.scalar;
 
+import io.crate.action.sql.SessionContext;
 import io.crate.analyze.symbol.Function;
 import io.crate.analyze.symbol.Literal;
 import io.crate.analyze.symbol.Symbol;
 import io.crate.metadata.FunctionIdent;
 import io.crate.metadata.Functions;
+import io.crate.metadata.TransactionContext;
 import io.crate.operation.Input;
 import io.crate.operation.tablefunctions.TableFunctionModule;
 import io.crate.plugin.ExamplePlugin;
@@ -48,6 +50,8 @@ import static org.junit.Assert.assertThat;
 
 public class ClassnamerFunctionTest {
 
+    private final TransactionContext transactionContext = new TransactionContext(SessionContext.SYSTEM_SESSION);
+
     static {
         Logger rootLogger = Logger.getRootLogger();
         rootLogger.setLevel(Level.INFO);
@@ -55,7 +59,7 @@ public class ClassnamerFunctionTest {
                 new PatternLayout("[%d{ISO8601}][%-5p][%-25c] %m%n")));
     }
 
-    protected ClassnamerFunction classnamerFunction;
+    private ClassnamerFunction classnamerFunction;
 
     private void registerPlugin(Settings settings) throws Exception {
         ScalarFunctionModule scalarFunctionModule = new ScalarFunctionModule();
@@ -89,7 +93,7 @@ public class ClassnamerFunctionTest {
 
         Function function = new Function(classnamerFunction.info(), Collections.<Symbol>emptyList());
 
-        Symbol symbol = classnamerFunction.normalizeSymbol(function);
+        Symbol symbol = classnamerFunction.normalizeSymbol(function, transactionContext);
         assertThat(symbol, instanceOf(Function.class));
         assertThat((Function) symbol, is(function));
     }
@@ -104,7 +108,7 @@ public class ClassnamerFunctionTest {
 
         Function function = new Function(classnamerFunction.info(), Collections.<Symbol>emptyList());
 
-        Symbol symbol = classnamerFunction.normalizeSymbol(function);
+        Symbol symbol = classnamerFunction.normalizeSymbol(function, transactionContext);
         assertThat(symbol, instanceOf(Literal.class));
 
         Literal literal = (Literal) symbol;
