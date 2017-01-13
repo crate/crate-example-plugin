@@ -51,7 +51,7 @@ public class ExamplePluginIntegrationTest {
 
         CrateTestServer testServer = testCluster.randomServer();
         jdbcConnectionString = String.format(Locale.ENGLISH,
-                "jdbc:postgresql://%s:%d/", testServer.crateHost(), testServer.psqlPort());
+                "jdbc:crate://%s:%d/", testServer.crateHost(), testServer.psqlPort());
     }
 
     private static void loadPlugin() throws IOException {

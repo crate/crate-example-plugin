@@ -21,6 +21,7 @@
 
 package io.crate.operation.scalar;
 
+import com.google.common.collect.Sets;
 import io.crate.analyze.symbol.Function;
 import io.crate.analyze.symbol.Literal;
 import io.crate.analyze.symbol.Symbol;
@@ -41,7 +42,10 @@ public class ClassnamerFunction extends Scalar<BytesRef, Void> {
     static final String NAME = "classnamer";
 
     private final static FunctionInfo INFO = new FunctionInfo(
-            new FunctionIdent(NAME, Collections.<DataType>emptyList()), DataTypes.STRING, FunctionInfo.Type.SCALAR, false, true
+        new FunctionIdent(NAME, Collections.<DataType>emptyList()),
+        DataTypes.STRING,
+        FunctionInfo.Type.SCALAR,
+        Sets.immutableEnumSet(FunctionInfo.Feature.COMPARISON_REPLACEMENT)
     );
 
     public static void register(ScalarFunctionModule module, boolean executePerRow) {

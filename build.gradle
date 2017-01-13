@@ -7,22 +7,16 @@ repositories {
     jcenter()
 }
 
-ext {
-    crate_version = '0.57.0'
-}
-
 configurations {
     dependency
     compile.extendsFrom dependency
 }
 
 dependencies {
-    compile("io.crate:crate:$crate_version") {
-        exclude module: 'crate-client'
-    }
+    compile 'io.crate:crate:1.0.2'
     dependency 'net.rtme:classnamerj:0.0.1'
 
-    testCompile 'org.postgresql:postgresql:9.4.1211.jre7'
+    testCompile 'io.crate:crate-jdbc:2.1.3'
     testCompile 'io.crate:crate-testing:0.4.3'
     testCompile 'org.hamcrest:hamcrest-all:1.3'
     testCompile('junit:junit:4.11') {
@@ -38,8 +32,8 @@ sourceSets {
     }
 }
 
-sourceCompatibility = "1.7";
-targetCompatibility = "1.7";
+sourceCompatibility = "1.8";
+targetCompatibility = "1.8";
 
 jar {
     from configurations.dependency.collect {
