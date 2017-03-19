@@ -1,27 +1,26 @@
-.. image:: https://cdn.crate.io/web/2.0/img/crate-avatar_100x100.png
-   :width: 100px
-   :height: 100px
-   :alt: Crate.IO
-   :target: https://crate.io
+=======================
+ CrateDB Example Plugin
+=======================
 
 .. image:: https://travis-ci.org/crate/crate-example-plugin.svg?branch=master
         :target: https://travis-ci.org/crate/crate-example-plugin
         :alt: Build status
 
-======================
- Crate Example Plugin
-======================
+|
 
-.. highlight:: sql
+This is an example plugin for demonstrating the CrateDB plugin
+infrastructure.
 
-This is an example plugin for Crate_ demontrating its plugin
-infrastructure. It is implementing a simple ``classnamer()`` scalar function.
-Once build, it's JAR file can just be dropped into crate's plugin path
-and after restarting the node/cluster, a shiny new awesome
-``classnamer()`` scalar function will be available on all SQL
-statements.
+This plugin implements a simple ``classnamer()`` scalar function.
 
-Example:
+Once built, the plugin JAR file can be dropped into CrateDB's plugin path. After
+restarting the CrateDB node or cluster, the ``classnamer()`` scalar function
+will be available for all SQL statements.
+
+Examples
+========
+
+Here's a simple example:
 
 ::
 
@@ -34,10 +33,7 @@ Example:
    +------------------------------+
    SELECT 2 rows in set (0.003 sec)
 
-Or with ``plugin.example.executeScalarPerRow`` setting set to
-``false``:
-
-::
+Or with the ``plugin.example.executeScalarPerRow`` setting set to ``false``::
 
    cr> select classnamer() from sys.nodes;
    +------------------------------+
@@ -48,80 +44,59 @@ Or with ``plugin.example.executeScalarPerRow`` setting set to
    +------------------------------+
    SELECT 2 rows in set (0.003 sec)
 
-Beside of tests & gradle stuff, this package contains just 3 files:
+File Layout
+===========
 
-:META-INF/services/io.crate.Plugin:
-   Defines the main plugin class name, crate's plugin loader will
-   load. As expected, the file must contain:
-   ``io.crate.plugin.ExamplePlugin`` ;).
+Beside of tests and build scaffolding, this package contains just three files:
 
-:io.crate.plugin.ExamplePlugin:
-   The main plugin class.
+- `META-INF/services/io.crate.Plugin`_
+    Defines the main plugin class name.
 
-:io.crate.operation.scalar.ClassnamerFunction:
-   The scalar function implementation.
+- `io.crate.plugin.ExamplePlugin`_
+    The main plugin class.
+
+- `io.crate.operation.scalar.ClassnamerFunction`_
+    The scalar function implementation.
 
 
-Build & Install
-===============
+Building and Installing
+=====================
 
-In order to use it with an existing crate installation, one must build
-a JAR and copy all related JAR's into crate's class path (usually at
+To use this plugin with an existing CrateDB installation, you must build
+a JAR file and copy all related JARs into CrateDB's class path (usually at
 ``<CRATE_HOME>/lib``).
 
-Build JAR
----------
+Build the JAR file like so::
 
-::
+    $ ./gradlew jar
 
-   ./gradlew jar
+Then copy JAR file to CrateDB's plugins directory::
 
-Install JAR
------------
+    $ cp build/libs/crate-example-plugin.jar <CRATE_HOME>/plugins/
 
-Copy plugin's JAR to crate's plugins directory::
+Here, ``CRATE_HOME`` is the root of your CrateDB installation.
 
-  cp build/libs/crate-example-plugin.jar <CRATE_HOME>/plugins/
+Running Tests
+=============
 
-Run tests
-=========
+You can run the tests like so::
 
-All test can be run by a single gradle task::
+    $ ./gradlew test
 
-  ./gradlew test
+Help
+====
 
-Help & Contact
-==============
+Looking for more help?
 
-Do you have any questions? Or suggestions? We would be very happy
-to help you. So, feel free to swing by our support channel on Slack_.
-Or for further information and official contact please
-visit `https://crate.io/ <https://crate.io/>`_.
+- Check `StackOverflow`_ for common problems
+- Chat with us on `Slack`_
+- Get `paid support`_
 
+
+.. _CrateDB: https://github.com/crate/crate
+.. _io.crate.operation.scalar.ClassnamerFunction: src/main/java/io/crate/operation/scalar/ClassnamerFunction.java
+.. _io.crate.plugin.ExamplePlugin: src/main/java/io/crate/plugin/ExamplePlugin.java
+.. _META-INF/services/io.crate.Plugin: https://github.com/crate/crate-example-plugin/blob/nomi/top-level-docs/src/main/resources/META-INF/services/io.crate.Plugin
+.. _paid support: https://crate.io/pricing/
 .. _Slack: https://crate.io/docs/support/slackin/
-
-License
-=======
-
-Copyright 2013-2015 CRATE Technology GmbH ("Crate")
-
-Licensed to CRATE Technology GmbH ("Crate") under one or more contributor
-license agreements.  See the NOTICE file distributed with this work for
-additional information regarding copyright ownership.  Crate licenses
-this file to you under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.  You may
-obtain a copy of the License at
-
-  http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
-License for the specific language governing permissions and limitations
-under the License.
-
-However, if you have executed another commercial license agreement
-with Crate these terms will supersede the license and you may use the
-software solely pursuant to the terms of the relevant commercial agreement.
-
-.. _Crate: https://github.com/crate/crate
+.. _StackOverflow: https://stackoverflow.com/tags/crate
