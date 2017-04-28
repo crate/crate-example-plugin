@@ -21,16 +21,17 @@
 
 package io.crate.plugin;
 
+import io.crate.Plugin;
 import io.crate.operation.scalar.ClassnamerFunction;
 import io.crate.operation.scalar.ScalarFunctionModule;
-import org.elasticsearch.common.logging.ESLogger;
+import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 
-public class ExamplePlugin extends AbstractPlugin {
+public class ExamplePlugin implements Plugin {
 
     public static final String EXECUTE_PER_ROW_SETTING = "plugin.example.executeScalarPerRow";
-    private static final ESLogger LOGGER = Loggers.getLogger(ExamplePlugin.class);
+    private static final Logger LOGGER = Loggers.getLogger(ExamplePlugin.class);
 
     private final boolean executePerRow;
 
