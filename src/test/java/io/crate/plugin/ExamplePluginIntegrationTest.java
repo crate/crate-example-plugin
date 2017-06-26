@@ -1,6 +1,27 @@
+/*
+ * Licensed to CRATE Technology GmbH ("Crate") under one or more contributor
+ * license agreements.  See the NOTICE file distributed with this work for
+ * additional information regarding copyright ownership.  Crate licenses
+ * this file to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.  You may
+ * obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+ * License for the specific language governing permissions and limitations
+ * under the License.
+ *
+ * However, if you have executed another commercial license agreement
+ * with Crate these terms will supersede the license and you may use the
+ * software solely pursuant to the terms of the relevant commercial agreement.
+ */
+
 package io.crate.plugin;
 
-import io.crate.operation.scalar.ClassnamerFunctionTest;
+import io.crate.shade.org.postgresql.util.PSQLException;
 import io.crate.testing.CrateTestCluster;
 import io.crate.testing.CrateTestServer;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -26,7 +47,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ExamplePluginIntegrationTest {
 
@@ -88,17 +111,24 @@ public class ExamplePluginIntegrationTest {
     }
 
     @Test
-    public void testClassnamer() throws Exception {
+    public void testIsEvenScalarFunction() throws Exception {
         try (Connection conn = DriverManager.getConnection(jdbcConnectionString, new Properties())) {
-            ResultSet rs = conn.createStatement().executeQuery("select classnamer() from sys.shards");
+            ResultSet rs = conn.createStatement().executeQuery("select is_even(123456) as POS, is_even(-123456) as NEG");
+            rs.next();
+            assertThat(rs.getBoolean("POS"), is(true));
+            assertThat(rs.getBoolean("NEG"), is(true));
 
-            // our classnamer function will generate fresh awesome class names for every row.
-            // 2 rows, 2 different class names
-            assertThat(rs.next(), is(true));
-            ClassnamerFunctionTest.validateClassnamer(rs.getString(1));
-            assertThat(rs.next(), is(true));
-            ClassnamerFunctionTest.validateClassnamer(rs.getString(1));
-            assertThat(rs.next(), is(false));
+            rs = conn.createStatement().executeQuery("select is_even(1234567) as POS, is_even(-1234567) as NEG");
+            rs.next();
+            assertThat(rs.getBoolean("POS"), is(false));
+            assertThat(rs.getBoolean("NEG"), is(false));
+
+            try {
+                rs = conn.createStatement().executeQuery("select is_even('sheep')");
+                fail();
+            } catch (PSQLException e) {
+                assertEquals("ERROR: UnsupportedFeatureException: unknown function: is_even(string)", e.getMessage());
+            }
         }
     }
 
