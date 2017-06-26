@@ -21,42 +21,52 @@
 
 package io.crate.plugin;
 
-import io.crate.operation.scalar.ClassnamerFunction;
-import io.crate.operation.scalar.ScalarFunctionModule;
-import org.elasticsearch.common.logging.ESLogger;
+import io.crate.Plugin;
+import io.crate.metadata.FunctionIdent;
+import io.crate.metadata.FunctionImplementation;
+import io.crate.operation.scalar.IsEvenScalarFunction;
+import io.crate.types.DataTypes;
+import org.apache.logging.log4j.Logger;
+import org.elasticsearch.common.inject.AbstractModule;
+import org.elasticsearch.common.inject.Module;
+import org.elasticsearch.common.inject.multibindings.MapBinder;
 import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 
-public class ExamplePlugin extends AbstractPlugin {
+import java.util.Collection;
+import java.util.Collections;
 
+public class ExamplePlugin implements Plugin {
     public static final String EXECUTE_PER_ROW_SETTING = "plugin.example.executeScalarPerRow";
-    private static final ESLogger LOGGER = Loggers.getLogger(ExamplePlugin.class);
-
+    private static final Logger LOGGER = Loggers.getLogger(ExamplePlugin.class);
     private final boolean executePerRow;
 
     public ExamplePlugin(Settings settings) {
-        executePerRow = settings.getAsBoolean(EXECUTE_PER_ROW_SETTING, true);
-        LOGGER.info("ExamplePlugin loaded, execute scalar function per row: {}", executePerRow);
+        this.executePerRow = settings.getAsBoolean("plugin.example.executeScalarPerRow", Boolean.valueOf(true)).booleanValue();
+        LOGGER.info("ExamplePlugin loaded, execute scalar function per row: {}", Boolean.valueOf(this.executePerRow));
     }
 
-    @Override
     public String name() {
         return "example-plugin";
     }
 
-    @Override
     public String description() {
         return "A example plugin demonstrating crate's plugin infrastructure.";
     }
 
-    /**
-     * Each plugin can provide a hook on already loaded modules.
-     * In this example we want to create a {@link io.crate.metadata.Scalar} function which will
-     * be available via SQL statements. Scalar functions can be registered on the
-     * {@link io.crate.operation.scalar.ScalarFunctionModule}, to do so we must implement
-     * the relevant <tt>onModule(AnyModule module)</tt> method.
-     */
-    public void onModule(ScalarFunctionModule module) {
-        ClassnamerFunction.register(module, executePerRow);
+    @Override
+    public Collection<Module> createGuiceModules() {
+        LOGGER.info("Registering new scalar function using MapBinder");
+        return Collections.singletonList(new AbstractModule() {
+            @Override
+            protected void configure() {
+                MapBinder<FunctionIdent, FunctionImplementation> functionBinder =
+                        MapBinder.newMapBinder(binder(), FunctionIdent.class, FunctionImplementation.class);
+                functionBinder.addBinding(new FunctionIdent(
+                                                  IsEvenScalarFunction.NAME,
+                                                  Collections.singletonList(DataTypes.LONG))
+                                         ).toInstance(new IsEvenScalarFunction());
+            }
+        });
     }
 }
