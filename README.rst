@@ -11,11 +11,13 @@
 This is an example plugin for demonstrating the CrateDB plugin
 infrastructure.
 
-This plugin implements a simple ``classnamer()`` scalar function.
+This plugin implements a simple ``is_even(long)`` scalar function.
 
 Once built, the plugin JAR file can be dropped into CrateDB's plugin path. After
-restarting the CrateDB node or cluster, the ``classnamer()`` scalar function
+restarting the CrateDB node or cluster, the ``is_even(long)`` scalar function
 will be available for all SQL statements.
+
+    Important: This plugin is bound to CrateDB version >= 2.0
 
 Examples
 ========
@@ -24,25 +26,13 @@ Here's a simple example:
 
 ::
 
-   cr> select classnamer() from sys.nodes;
-   +------------------------------+
-   | classnamer()                 |
-   +------------------------------+
-   | ScriptableResourceSubscriber |
-   | StatefulGraphPreference      |
-   +------------------------------+
-   SELECT 2 rows in set (0.003 sec)
-
-Or with the ``plugin.example.executeScalarPerRow`` setting set to ``false``::
-
-   cr> select classnamer() from sys.nodes;
-   +------------------------------+
-   | classnamer()                 |
-   +------------------------------+
-   | ThreadedResultReader         |
-   | ThreadedResultReader         |
-   +------------------------------+
-   SELECT 2 rows in set (0.003 sec)
+   cr> select is_even(4);
+   +------------+
+   | is_even(4) |
+   +------------+
+   | TRUE       |
+   +------------+
+   SELECT 1 row in set (0.009 sec)
 
 File Layout
 ===========
@@ -55,7 +45,7 @@ Beside of tests and build scaffolding, this package contains just three files:
 - `io.crate.plugin.ExamplePlugin`_
     The main plugin class.
 
-- `io.crate.operation.scalar.ClassnamerFunction`_
+- `io.crate.operation.scalar.IsEvenScalarFunction`_
     The scalar function implementation.
 
 
@@ -94,7 +84,7 @@ Looking for more help?
 
 
 .. _CrateDB: https://github.com/crate/crate
-.. _io.crate.operation.scalar.ClassnamerFunction: src/main/java/io/crate/operation/scalar/ClassnamerFunction.java
+.. _io.crate.operation.scalar.IsEvenScalarFunction: src/main/java/io/crate/operation/scalar/IsEvenScalarFunction.java
 .. _io.crate.plugin.ExamplePlugin: src/main/java/io/crate/plugin/ExamplePlugin.java
 .. _META-INF/services/io.crate.Plugin: https://github.com/crate/crate-example-plugin/blob/nomi/top-level-docs/src/main/resources/META-INF/services/io.crate.Plugin
 .. _paid support: https://crate.io/pricing/
