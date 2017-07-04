@@ -15,7 +15,6 @@ configurations {
 dependencies {
     compile 'io.crate:crate:2.0.2'
     compile 'org.apache.logging.log4j:log4j-api:2.7'
-    dependency 'net.rtme:classnamerj:0.0.1'
 
     testCompile 'io.crate:crate-jdbc:2.1.7'
     testCompile 'io.crate:crate-testing:0.6.0'
