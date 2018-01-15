@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 
 public class IsEvenScalarFunctionTest {
 
-    private final TransactionContext transactionContext = new TransactionContext(SessionContext.SYSTEM_SESSION);
+    private final TransactionContext transactionContext = new TransactionContext();
 
     static {
         Logger rootLogger = Logger.getRootLogger();
