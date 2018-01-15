@@ -8,6 +8,9 @@
 
 |
 
+**PLEASE NOTE!** This repository is out-of-date. Please `contact us
+<https://crate.io/contact/>`_ for support writing plugins.
+
 This is an example plugin for demonstrating the CrateDB plugin
 infrastructure.
 
@@ -17,7 +20,7 @@ Once built, the plugin JAR file can be dropped into CrateDB's plugin path. After
 restarting the CrateDB node or cluster, the ``is_even(long)`` scalar function
 will be available for all SQL statements.
 
-    Important: This plugin is bound to CrateDB version >= 2.0
+*Important: this plugin is bound to CrateDB version >= 2.0.*
 
 Examples
 ========
@@ -81,7 +84,6 @@ Looking for more help?
 - Check `StackOverflow`_ for common problems
 - Chat with us on `Slack`_
 - Get `paid support`_
-
 
 .. _CrateDB: https://github.com/crate/crate
 .. _io.crate.operation.scalar.IsEvenScalarFunction: src/main/java/io/crate/operation/scalar/IsEvenScalarFunction.java
