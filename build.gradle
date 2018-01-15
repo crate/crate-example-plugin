@@ -13,7 +13,7 @@ configurations {
 }
 
 dependencies {
-    compile 'io.crate:crate:2.0.2'
+    compile 'io.crate:crate:2.2.1'
     compile 'org.apache.logging.log4j:log4j-api:2.7'
 
     testCompile 'io.crate:crate-jdbc:2.1.7'
