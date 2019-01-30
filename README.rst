@@ -81,14 +81,11 @@ Help
 
 Looking for more help?
 
-- Check `StackOverflow`_ for common problems
-- Chat with us on `Slack`_
-- Get `paid support`_
+- Read the `project docs`_
+- Check out our `support channels`_
 
 .. _CrateDB: https://github.com/crate/crate
 .. _io.crate.operation.scalar.IsEvenScalarFunction: src/main/java/io/crate/operation/scalar/IsEvenScalarFunction.java
 .. _io.crate.plugin.ExamplePlugin: src/main/java/io/crate/plugin/ExamplePlugin.java
 .. _META-INF/services/io.crate.Plugin: https://github.com/crate/crate-example-plugin/blob/nomi/top-level-docs/src/main/resources/META-INF/services/io.crate.Plugin
-.. _paid support: https://crate.io/pricing/
-.. _Slack: https://crate.io/docs/support/slackin/
-.. _StackOverflow: https://stackoverflow.com/tags/crate
+.. _support channels: https://crate.io/support/
