@@ -26,11 +26,11 @@ import io.crate.metadata.FunctionIdent;
 import io.crate.metadata.FunctionImplementation;
 import io.crate.operation.scalar.IsEvenScalarFunction;
 import io.crate.types.DataTypes;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.common.inject.AbstractModule;
 import org.elasticsearch.common.inject.Module;
 import org.elasticsearch.common.inject.multibindings.MapBinder;
-import org.elasticsearch.common.logging.Loggers;
 import org.elasticsearch.common.settings.Settings;
 
 import java.util.Collection;
@@ -38,7 +38,7 @@ import java.util.Collections;
 
 public class ExamplePlugin implements Plugin {
     public static final String EXECUTE_PER_ROW_SETTING = "plugin.example.executeScalarPerRow";
-    private static final Logger LOGGER = Loggers.getLogger(ExamplePlugin.class);
+    private static final Logger LOGGER = LogManager.getLogger(ExamplePlugin.class);
     private final boolean executePerRow;
 
     public ExamplePlugin(Settings settings) {
